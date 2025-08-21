@@ -16,14 +16,17 @@ const ChatBox = ({
 
   return (
     <div className="absolute right-4  bottom-5 ">
-      <div className="shadow-lg w-90 rounded-lg ">
+      <div className="shadow-lg w-82 rounded-lg bg-[#f8f9fa]">
         {/* Header */}
-        <div className="flex justify-between item-center px-6 py-4  bg-[#9CADFF] rounded-t-lg shadow-[0_4px_6px_-1px_rgba(0,0,0,0.1)]">
+        <div className="flex justify-between item-center h-18 px-6 py-4  bg-[#9CADFF] rounded-t-lg shadow-[0_5px_6px_rgba(0,0,0,0.3)] z-4">
           <div className="flex gap-2 items-center justify-between">
             <img src={Logo} alt="" className="w-12" />
             <div className="flex flex-col text-[#43ee7d]">
               <h2 className="text-[#ffffff] text-xl font-bold">Mercia</h2>
-              <p>Online</p>
+              <p>
+                <span className="inline-block w-3 h-3 rounded-full bg-[#43ee7d] me-1"></span>
+                Online
+              </p>
             </div>
           </div>
           <button
@@ -34,7 +37,7 @@ const ChatBox = ({
           </button>
         </div>
         {/* Chat Messages */}
-        <div className="h-96 overflow-x-auto [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden px-7 py-5 bg-[#f8f9fa]">
+        <div className="h-110 overflow-x-auto [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden px-7 py-5 ">
           <BotChat />
           <LoggerChat />
           <BotChat />
@@ -46,10 +49,10 @@ const ChatBox = ({
         </div>
 
         {/* Footer */}
-        <div className="flex flex-col justify-center items-center gap-1.5 bg-[#ffffff] px-6 py-4 rounded-b-lg shadow-[0_-4px_6px_-1px_rgba(0,0,0,0.1)]">
-          <div className="flex justify-between items-center w-full ">
+        <div className="flex flex-col justify-center items-center gap-1.5 bg-[#ffffff] h-27 px-6 py-4 rounded-b-lg shadow-[0_-4px_6px_-1px_rgba(0,0,0,0.1)] z-4">
+          <div className="flex justify-between items-center w-full overflow-y-scroll [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden">
             <div className="bg-[#f3f5f6] px-2 font-semibold py-1 text-xs text-[#444444] shadow-xs rounded-lg">
-              <p>🤔 Do you deliver Tirur?</p>
+              <p>🤔 Do you deliver?</p>
             </div>
             <div className="bg-[#f3f5f6] px-2 font-semibold py-1 text-xs text-[#444444] shadow-xs rounded-lg">
               <p>💰 Stores</p>

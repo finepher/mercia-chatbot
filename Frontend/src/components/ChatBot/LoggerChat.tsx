@@ -1,9 +1,10 @@
 import Triangle from "../../assets/images/Rectangle 2.png";
+import { LiaCheckDoubleSolid } from "react-icons/lia";
 import { CgProfile } from "react-icons/cg";
 
 const LoggerChat = () => {
   return (
-    <div className="relative flex justify-start  w-9/10 rounded-lg rounded-br-none p-2 pb-5 bg-[#dee2e6]  mb-10 ml-7">
+    <div className="relative flex justify-start  w-9/10 rounded-lg rounded-br-none pl-4 p-3 pb-7 bg-[#dee2e6]  mb-10 ml-7 z-1">
       <p className="ml-2 text-[#444444]">
         Hello from logger Lorem ipsum, dolor sit amet consectetur adipisicing
         elit. Eius ad dolorum nihil corrupti perferendis ullam in, quas
@@ -19,6 +20,7 @@ const LoggerChat = () => {
         <CgProfile size={35} />
       </div>
       <p className="absolute  left-5  -bottom-5 text-[#444444] text-xs">7:20</p>
+      <LiaCheckDoubleSolid className="absolute  left-12  -bottom-5 text-[#444444]" />
     </div>
   );
 };
