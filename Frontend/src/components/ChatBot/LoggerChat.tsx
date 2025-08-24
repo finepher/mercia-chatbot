@@ -4,7 +4,7 @@ import { CgProfile } from "react-icons/cg";
 
 const LoggerChat = () => {
   return (
-    <div className="relative flex justify-start  w-9/10 rounded-lg rounded-br-none pl-4 p-3 pb-7 bg-[#dee2e6]  mb-10 ml-7 z-1">
+    <div className="relative flex justify-start  w-9/10 rounded-lg rounded-br-none pl-4 p-3 pb-7 bg-[#dee2e6]  mb-10 ml-7 z-0">
       <p className="ml-2 text-[#444444]">
         Hello from logger Lorem ipsum, dolor sit amet consectetur adipisicing
         elit. Eius ad dolorum nihil corrupti perferendis ullam in, quas

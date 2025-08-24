@@ -16,7 +16,7 @@ const ChatBox = ({
 
   return (
     <div className="absolute right-4  bottom-5 ">
-      <div className="shadow-lg w-82 rounded-lg bg-[#f8f9fa]">
+      <div className="relative shadow-b-lg w-82 rounded-lg bg-[#f8f9fa]">
         {/* Header */}
         <div className="flex justify-between item-center h-18 px-6 py-4  bg-[#9CADFF] rounded-t-lg shadow-[0_5px_6px_rgba(0,0,0,0.3)] z-4">
           <div className="flex gap-2 items-center justify-between">
