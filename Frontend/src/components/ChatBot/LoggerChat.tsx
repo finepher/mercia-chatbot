@@ -1,6 +1,6 @@
 import Triangle from "../../assets/images/Rectangle 2.png";
 import { LiaCheckDoubleSolid } from "react-icons/lia";
-import { CgProfile } from "react-icons/cg";
+import userprofile from "../../assets/images/userprofile.jpg";
 
 const LoggerChat = ({ Chat }: { Chat: string | number }) => {
   return (
@@ -12,8 +12,8 @@ const LoggerChat = ({ Chat }: { Chat: string | number }) => {
           alt=""
           className="w-10 absolute  right-0  -bottom-5"
         />
-        <div className=" absolute  -right-3  -bottom-13 bg-[#c9b8da] p-1 rounded-full">
-          <CgProfile size={35} />
+        <div className=" absolute  -right-3  -bottom-13 bg-[#c9b8da]  rounded-full">
+          <img src={userprofile} alt="" className="w-11 rounded-full" />
         </div>
         <p className="absolute  left-5  -bottom-5 text-[#444444] text-xs">
           7:20
