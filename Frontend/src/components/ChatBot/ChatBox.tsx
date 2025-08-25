@@ -79,27 +79,32 @@ const ChatBox = ({
               ))}
             </div>
           </div>
-          <div className=" flex justify-evenly items-center w-full p-3 rounded-lg bg-[#E8EBF0]">
-            <input
-              className="w-60 outline-none"
-              type="text"
-              value={inputMessage}
-              placeholder="Type your message here..."
-              onChange={(e) => {
-                setInputMessage(e.target.value);
-              }}
-            />
-            <button
-              onClick={() => {
+          <div>
+            <form
+              onSubmit={(e) => {
+                e.preventDefault();
+                if (!inputMessage.toString().trim()) return; // prevent empty message
                 setMessages([
                   ...messages,
                   { role: "user", content: inputMessage },
                 ]);
                 setInputMessage("");
               }}
+              className="flex justify-evenly items-center w-full p-3 rounded-lg bg-[#E8EBF0]"
             >
-              <img className="w-5" src={Send} alt="" />
-            </button>
+              <input
+                className="w-60 outline-none"
+                type="text"
+                value={inputMessage}
+                placeholder="Type your message here..."
+                onChange={(e) => {
+                  setInputMessage(e.target.value);
+                }}
+              />
+              <button type="submit">
+                <img className="w-5" src={Send} alt="" />
+              </button>
+            </form>
           </div>
         </div>
       </div>
