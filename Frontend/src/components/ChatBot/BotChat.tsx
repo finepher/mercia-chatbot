@@ -2,10 +2,13 @@ import Triangle from "../../assets/images/Rectangle 1.png";
 import Logo from "../../assets/images/logo.png";
 import { LuClipboardList } from "react-icons/lu";
 import { FaThumbsUp, FaThumbsDown } from "react-icons/fa6";
-const BotChat = () => {
+const BotChat = ({ key, Chat }: { key: number; Chat: string | number }) => {
   return (
-    <div className="relative flex justify-start  w-9/10 rounded-lg rounded-bl-none text-[#ffffff] pl-4 p-3 pb-7 bg-[#3c096c]  mb-10 -ml-3 z-0">
-      <p className="ml-2 text-[#ffffff]">Hello from bot</p>
+    <div
+      key={key}
+      className="relative flex justify-start  w-9/10 rounded-lg rounded-bl-none text-[#ffffff] pl-4 p-3 pb-7 bg-[#3c096c]  mb-17 -ml-3 z-0"
+    >
+      <p className="ml-2 text-[#ffffff]">{Chat}</p>
       <img src={Triangle} alt="" className="w-10 absolute  left-0  -bottom-5" />
       <div className=" absolute  -left-3  -bottom-12 bg-[#5A189A] p-2 rounded-full">
         <img src={Logo} alt="" className="w-7" />
