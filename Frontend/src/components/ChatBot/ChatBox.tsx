@@ -41,12 +41,14 @@ const ChatBox = ({
      
 
      serverRef.current?.on("chat_message", (data) => {
-       setMessages((prev)=>{
+
+       setMessages((prevMessage)=>{
         return [
-            ...prev,
-        { role: "bot", content: data },
-      ]
+              ...prevMessage,
+          { role: "bot", content: data },
+        ]
        });
+       
     });
 
     return () => {
@@ -115,6 +117,8 @@ const ChatBox = ({
                   ...messages,
                   { role: "user", content: inputMessage },
                 ]);
+
+
                 setInputMessage("");
                 
               }}
