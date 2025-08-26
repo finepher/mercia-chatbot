@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import BotChat from "./BotChat";
 import LoggerChat from "./LoggerChat";
 import SuggestedMessages from "./SuggestedMessages";
@@ -6,10 +6,13 @@ import { MdOutlineDoNotDisturbOn } from "react-icons/md";
 import Logo from "../../assets/images/logo.png";
 import Send from "../../assets/images/send.png";
 
+import { Socket, io as socketConnection  } from "socket.io-client"
+
 type ChatMessage = {
   role: string;
   content: string | number;
 };
+
 
 const ChatBox = ({
   onClose,
@@ -29,8 +32,31 @@ const ChatBox = ({
 
   const SuggestedMessagesHandler = (msg: string) => setInputMessage(msg);
 
-  if (!isOpen) return null;
 
+  const serverRef = useRef<Socket>(null)
+ serverRef.current = socketConnection("http://localhost:3001")
+
+
+    useEffect(()=>{
+     
+
+     serverRef.current?.on("chat_message", (data) => {
+       setMessages((prev)=>{
+        return [
+            ...prev,
+        { role: "bot", content: data },
+      ]
+       });
+    });
+
+    return () => {
+      serverRef.current?.off("chat_message");
+    };
+
+    },[])
+     
+    
+  if (!isOpen) return null;
   return (
     <div className="fixed right-4  bottom-5 ">
       <div className="relative shadow-lg w-82 h-155 rounded-lg bg-[#f8f9fa]">
@@ -84,11 +110,13 @@ const ChatBox = ({
               onSubmit={(e) => {
                 e.preventDefault();
                 if (!inputMessage.toString().trim()) return; // prevent empty message
+                
                 setMessages([
                   ...messages,
                   { role: "user", content: inputMessage },
                 ]);
                 setInputMessage("");
+                
               }}
               className="flex justify-evenly items-center w-full p-3 rounded-lg bg-[#E8EBF0]"
             >
