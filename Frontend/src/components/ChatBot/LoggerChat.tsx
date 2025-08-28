@@ -2,11 +2,19 @@ import Triangle from "../../assets/images/Rectangle 2.png";
 import { LiaCheckDoubleSolid } from "react-icons/lia";
 import userprofile from "../../assets/images/userprofile.jpg";
 
-const LoggerChat = ({ Chat }: { Chat: string | number }) => {
+const LoggerChat = ({
+  key,
+  Chat,
+  time,
+}: {
+  key: number;
+  Chat: string;
+  time: string;
+}) => {
   return (
-    <div className="z-0">
-      <div className="relative flex justify-start  w-9/10 rounded-lg rounded-br-none pl-4 p-3 pb-7 bg-[#dee2e6]  mb-17 ml-7">
-        <p className="ml-2 text-[#444444]">{Chat}</p>
+    <div key={key}>
+      <div className="relative flex justify-start  max-w-60 rounded-lg rounded-br-none pl-4 p-3 pb-7 bg-[#dee2e6]  mb-17 ml-7">
+        <p className="ml-2 text-[#444444] max-w-[233px]">{Chat}</p>
         <img
           src={Triangle}
           alt=""
@@ -16,9 +24,9 @@ const LoggerChat = ({ Chat }: { Chat: string | number }) => {
           <img src={userprofile} alt="" className="w-11 rounded-full" />
         </div>
         <p className="absolute  left-5  -bottom-5 text-[#444444] text-xs">
-          7:20
+          {time}
         </p>
-        <LiaCheckDoubleSolid className="absolute  left-12  -bottom-5 text-[#444444]" />
+        <LiaCheckDoubleSolid className="absolute  left-13  -bottom-5 text-[#444444]" />
       </div>
     </div>
   );
