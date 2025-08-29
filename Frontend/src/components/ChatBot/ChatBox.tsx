@@ -1,14 +1,16 @@
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import BotChat from "./BotChat";
 import LoggerChat from "./LoggerChat";
 import SuggestedMessages from "./SuggestedMessages";
 import { MdOutlineDoNotDisturbOn } from "react-icons/md";
 import Logo from "../../assets/images/logo.png";
 import Send from "../../assets/images/send.png";
+import { Socket, io } from "socket.io-client";
 
 type ChatMessage = {
   role: string;
-  content: string | number;
+  content: string;
+  time: string;
 };
 
 const ChatBox = ({
@@ -18,7 +20,7 @@ const ChatBox = ({
   onClose: () => void;
   isOpen: boolean;
 }) => {
-  const [inputMessage, setInputMessage] = useState<string | number>("");
+  const [inputMessage, setInputMessage] = useState<string>("");
   const [messages, setMessages] = useState<ChatMessage[]>([]);
   const suggestedMessages: string[] = [
     "🤔 Do you deliver tirur?",
@@ -27,7 +29,42 @@ const ChatBox = ({
     "📞 Contact Us",
   ];
 
+  const getTime = () => {
+    const now = new Date();
+    const currentTime = now.toLocaleTimeString([], {
+      hour: "2-digit",
+      minute: "2-digit",
+    });
+    return currentTime;
+  };
+
   const SuggestedMessagesHandler = (msg: string) => setInputMessage(msg);
+  const scrollRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    scrollRef.current?.scrollIntoView({ behavior: "smooth" });
+  }, [messages]);
+
+  const socketRef = useRef<Socket>(null);
+
+  useEffect(() => {
+    socketRef.current = io("http://localhost:3001");
+    socketRef.current?.on("chat_message", (data) => {
+      setMessages((prev) => [
+        ...prev.filter((msg) => msg.content !== "Thinking..."),
+        {
+          role: "bot",
+          content: data,
+          time: getTime(),
+        },
+      ]);
+      // setMessages((prev) => [...prev, { role: "bot", content: data }]);
+    });
+
+    return () => {
+      socketRef.current?.off("chat_message");
+    };
+  }, []);
 
   if (!isOpen) return null;
 
@@ -55,14 +92,19 @@ const ChatBox = ({
         </div>
         {/* Chat Messages */}
         <div className="relative h-110 top-18 overflow-x-auto [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden px-7 py-5 z-1">
-          <BotChat key={0} Chat={"Hello from bot"} />
+          {/* <BotChat key={0} Chat={"Hello from bot"} /> */}
           {messages.map((message, index) =>
             message.role === "user" ? (
-              <LoggerChat key={index} Chat={message.content} />
+              <LoggerChat
+                key={index}
+                Chat={message.content}
+                time={message.time}
+              />
             ) : (
-              <BotChat key={index} Chat={message.content} />
+              <BotChat key={index} Chat={message.content} time={message.time} />
             )
           )}
+          <div ref={scrollRef} />
         </div>
 
         {/* Footer */}
@@ -84,11 +126,22 @@ const ChatBox = ({
               onSubmit={(e) => {
                 e.preventDefault();
                 if (!inputMessage.toString().trim()) return; // prevent empty message
-                setMessages([
-                  ...messages,
-                  { role: "user", content: inputMessage },
-                ]);
+                setMessages((prev) => {
+                  return [
+                    ...prev,
+                    { role: "user", content: inputMessage, time: getTime() },
+                  ];
+                });
+                socketRef.current?.emit("chat_message", inputMessage);
                 setInputMessage("");
+                setTimeout(() => {
+                  setMessages((prev) => {
+                    return [
+                      ...prev,
+                      { role: "bot", content: "Thinking...", time: getTime() },
+                    ];
+                  });
+                }, 500);
               }}
               className="flex justify-evenly items-center w-full p-3 rounded-lg bg-[#E8EBF0]"
             >

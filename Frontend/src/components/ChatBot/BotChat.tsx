@@ -2,18 +2,28 @@ import Triangle from "../../assets/images/Rectangle 1.png";
 import Logo from "../../assets/images/logo.png";
 import { LuClipboardList } from "react-icons/lu";
 import { FaThumbsUp, FaThumbsDown } from "react-icons/fa6";
-const BotChat = ({ key, Chat }: { key: number; Chat: string | number }) => {
+const BotChat = ({
+  key,
+  Chat,
+  time,
+}: {
+  key: number;
+  Chat: string;
+  time: string;
+}) => {
   return (
     <div
       key={key}
-      className="relative flex justify-start  w-9/10 rounded-lg rounded-bl-none text-[#ffffff] pl-4 p-3 pb-7 bg-[#3c096c]  mb-17 -ml-3 z-0"
+      className="relative flex justify-start  max-w-60  rounded-lg rounded-bl-none text-[#ffffff] pl-4 p-3 pb-7 bg-[#3c096c]  mb-17 -ml-3 z-0"
     >
-      <p className="ml-2 text-[#ffffff]">{Chat}</p>
+      <p className="ml-2 text-[#ffffff] max-w-[233px]">{Chat}</p>
       <img src={Triangle} alt="" className="w-10 absolute  left-0  -bottom-5" />
       <div className=" absolute  -left-3  -bottom-12 bg-[#5A189A] p-2 rounded-full">
         <img src={Logo} alt="" className="w-7" />
       </div>
-      <p className="absolute  left-9  -bottom-6 text-[#444444] text-xs">7:20</p>
+      <p className="absolute  left-9  -bottom-6 text-[#444444] text-xs ">
+        {time}
+      </p>
       <div className="flex justify-between items-center gap-2 absolute  right-5  -bottom-2  bg-[#5A189A] p-1 rounded-md">
         <button>
           <LuClipboardList size={15} />
