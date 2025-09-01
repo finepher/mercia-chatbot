@@ -7,7 +7,7 @@ const SuggestedMessages = ({
 }: {
   index: number;
   msg: string;
-  InputMessage: (message: string) => void;
+  InputMessage: (msg: string) => void;
 }) => {
   return (
     <div

@@ -16,7 +16,9 @@ const BotChat = ({
       key={key}
       className="relative flex justify-start  max-w-60  rounded-lg rounded-bl-none text-[#ffffff] pl-4 p-3 pb-7 bg-[#3c096c]  mb-17 -ml-3 z-0"
     >
-      <p className="ml-2 text-[#ffffff] max-w-[233px]">{Chat}</p>
+      <p className="ml-2 text-[#ffffff] break-words w-full">
+        {Chat === "Thinking..." ? `🤔${Chat}` : Chat}
+      </p>
       <img src={Triangle} alt="" className="w-10 absolute  left-0  -bottom-5" />
       <div className=" absolute  -left-3  -bottom-12 bg-[#5A189A] p-2 rounded-full">
         <img src={Logo} alt="" className="w-7" />
@@ -25,7 +27,15 @@ const BotChat = ({
         {time}
       </p>
       <div className="flex justify-between items-center gap-2 absolute  right-5  -bottom-2  bg-[#5A189A] p-1 rounded-md">
-        <button>
+        <button
+          onClick={async () => {
+            try {
+              await navigator.clipboard.writeText(Chat);
+            } catch (error) {
+              console.error("Failed to copy: ", error);
+            }
+          }}
+        >
           <LuClipboardList size={15} />
         </button>
         <button>
