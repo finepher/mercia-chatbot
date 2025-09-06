@@ -1,7 +1,9 @@
+import { useState } from "react";
 import Triangle from "../../assets/images/Rectangle 1.png";
 import Logo from "../../assets/images/logo.png";
 import { LuClipboardList } from "react-icons/lu";
 import { FaThumbsUp, FaThumbsDown } from "react-icons/fa6";
+
 const BotChat = ({
   key,
   Chat,
@@ -11,6 +13,7 @@ const BotChat = ({
   Chat: string;
   time: string;
 }) => {
+  const [copyBtn, setCopyBtn] = useState<boolean>(false);
   return (
     <div
       key={key}
@@ -28,15 +31,22 @@ const BotChat = ({
       </p>
       <div className="flex justify-between items-center gap-2 absolute  right-5  -bottom-2  bg-[#5A189A] p-1 rounded-md">
         <button
+          className={copyBtn ? "text-[#43ee7d]" : ""}
           onClick={async () => {
+            setCopyBtn(true);
             try {
               await navigator.clipboard.writeText(Chat);
             } catch (error) {
               console.error("Failed to copy: ", error);
+            } finally {
+              setTimeout(() => setCopyBtn(false), 500);
             }
           }}
         >
-          <LuClipboardList size={15} />
+          <LuClipboardList
+            size={15}
+            className={copyBtn ? "text-[#43ee7d]" : ""}
+          />
         </button>
         <button>
           <FaThumbsUp size={15} />

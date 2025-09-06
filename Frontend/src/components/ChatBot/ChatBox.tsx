@@ -22,6 +22,11 @@ const ChatBox = ({ onClose }: { onClose: () => void }) => {
     "💰 Stores",
     "🙋‍♂️ FAQs",
     "📞 Contact Us",
+    "Show me the latest products",
+    "Do you have discounts today?",
+    "Where is my order?",
+    "What payment methods do you accept?",
+    "I need help with my order",
   ];
 
   const getTime = () => {
@@ -48,12 +53,11 @@ const ChatBox = ({ onClose }: { onClose: () => void }) => {
       setMessages((prev) => [
         ...prev.filter((msg) => msg.content !== "Thinking..."),
         {
-          role: "bot",
-          content: data,
+          role: data?.role || "bot",
+          content: data?.content?.trim() || data,
           time: getTime(),
         },
       ]);
-      // setMessages((prev) => [...prev, { role: "bot", content: data }]);
     });
 
     return () => {
