@@ -5,6 +5,10 @@ dotenv.config();
 
 
 const OpenAI = require("openai");
+const openai = new OpenAI({
+                 apiKey: process.env.GEMINI_API_KEY,
+                 baseURL: "https://generativelanguage.googleapis.com/v1beta/openai/"
+            });
 
 const {Server} = require('socket.io');
 
@@ -14,15 +18,15 @@ const socket = new Server(3001,{
 
 socket.on("connection",(socketConnection)=>{
 
+    const welcomeMessage = {content: "👋 Hi, I’m Mercia, your shopping assistant! How can I help you today?", role: 'assistant'}
+    socketConnection.emit("chat_message", welcomeMessage);
+
     socketConnection.on("chat_message",async(data)=>{
         console.log("message received>>" ,data)
 
         // ai api settings
         try {
-            const openai = new OpenAI({
-                 apiKey: process.env.GEMINI_API_KEY,
-                 baseURL: "https://generativelanguage.googleapis.com/v1beta/openai/"
-            });
+            
 
             const response = await openai.chat.completions.create({
             model: "gemini-2.0-flash",
@@ -32,11 +36,14 @@ socket.on("connection",(socketConnection)=>{
                             called Fresh Mart. you should answer as an expert shopping assistant.
                             your name is Mercia.
 
-                            user id is 12345. you should remember this user id for future conversations.
+                            user id is ${data.Id}. you should remember this user id for future conversations.
+                            do not include the user id in your responses.
 
                             Your goals:
                             - Understand user queries about grocery products and provide accurate, relevant information.
-                            - Greet users politely and maintain a friendly, professional tone.  
+                            - Greet users politely **only when they start a conversation or if explicitly asked**.
+                            - Do not include greetings, introductions, or pleasantries in follow-up responses.
+                            - Maintain a friendly and professional tone, but focus on answering the questions clearly and concisely.  
                             - Help customers browse products across multiple categories 
                               (vegetable,fruits,meet,fish,dairy etc).  
                             - Answer questions clearly and concisely, avoiding long paragraphs.  
@@ -59,7 +66,7 @@ socket.on("connection",(socketConnection)=>{
 ` },
                 {
                     role: "user",
-                    content: data,
+                    content: data.message,
                 },
             ],
             });
@@ -73,9 +80,6 @@ socket.on("connection",(socketConnection)=>{
         
         
     })
-
-            const welcomeMessage = {content: "👋 Hi, I’m Mercia, your shopping assistant! How can I help you today?", role: 'assistant'}
-            socketConnection.emit("chat_message", welcomeMessage);
         
 })
 
