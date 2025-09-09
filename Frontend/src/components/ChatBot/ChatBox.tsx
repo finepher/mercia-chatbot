@@ -29,6 +29,17 @@ const ChatBox = ({ onClose }: { onClose: () => void }) => {
     "I need help with my order",
   ];
 
+  const getUserId = () => {
+    const id = crypto.randomUUID();
+    localStorage.setItem("userId", id);
+    return id;
+  };
+
+  const [userId] = useState<string>(() => {
+    const storedId = localStorage.getItem("userId");
+    return storedId ? storedId : getUserId();
+  });
+
   const getTime = () => {
     const now = new Date();
     const currentTime = now.toLocaleTimeString([], {
@@ -38,7 +49,6 @@ const ChatBox = ({ onClose }: { onClose: () => void }) => {
     return currentTime;
   };
 
-  // const SuggestedMessagesHandler = (msg: string) => setInputMessage(msg);
   const scrollRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -145,7 +155,10 @@ const ChatBox = ({ onClose }: { onClose: () => void }) => {
                       { role: "user", content: inputMessage, time: getTime() },
                     ];
                   });
-                  socketRef.current?.emit("chat_message", inputMessage);
+                  socketRef.current?.emit("chat_message", {
+                    message: inputMessage,
+                    Id: userId,
+                  });
                   setInputMessage("");
                   setTimeout(() => {
                     setMessages((prev) => {
