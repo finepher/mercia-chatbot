@@ -35,10 +35,10 @@ const ChatBox = ({ onClose }: { onClose: () => void }) => {
     return id;
   };
 
-  const [userId] = useState<string>(() => {
+  const userId = () => {
     const storedId = localStorage.getItem("userId");
     return storedId ? storedId : getUserId();
-  });
+  };
 
   const getTime = () => {
     const now = new Date();
