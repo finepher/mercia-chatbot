@@ -59,7 +59,6 @@ const ChatBox = ({ onClose }: { onClose: () => void }) => {
 
   useEffect(() => {
     socketRef.current = io("http://localhost:3001");
-    localStorage.setItem("userId", "68c299da1fa1d6fb15ad5da1");
 
     if (!userId()) {
       socketRef.current?.emit("user_login", "new_user");
