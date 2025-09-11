@@ -29,15 +29,15 @@ const ChatBox = ({ onClose }: { onClose: () => void }) => {
     "I need help with my order",
   ];
 
-  const getUserId = () => {
-    const id = crypto.randomUUID();
-    localStorage.setItem("userId", id);
-    return id;
-  };
+  // const getUserId = () => {
+  //   const id = crypto.randomUUID();
+  //   localStorage.setItem("userId", id);
+  //   return id;
+  // };
 
   const userId = () => {
     const storedId = localStorage.getItem("userId");
-    return storedId ? storedId : getUserId();
+    return storedId;
   };
 
   const getTime = () => {
@@ -59,12 +59,30 @@ const ChatBox = ({ onClose }: { onClose: () => void }) => {
 
   useEffect(() => {
     socketRef.current = io("http://localhost:3001");
+    localStorage.setItem("userId", "68c299da1fa1d6fb15ad5da1");
+
+    if (!userId()) {
+      socketRef.current?.emit("user_login", "new_user");
+    }
+
     socketRef.current?.on("chat_message", (data) => {
       setMessages((prev) => [
         ...prev.filter((msg) => msg.content !== "Thinking..."),
         {
-          role: data?.role || "bot",
+          role: data?.role || "assistant",
           content: data?.content?.trim() || data,
+          time: getTime(),
+        },
+      ]);
+    });
+    socketRef.current?.on("user_login", (data) => {
+      console.log(data);
+      localStorage.setItem("userId", data?.id);
+      setMessages((prev) => [
+        ...prev,
+        {
+          role: "assistant",
+          content: data?.message,
           time: getTime(),
         },
       ]);
@@ -149,6 +167,21 @@ const ChatBox = ({ onClose }: { onClose: () => void }) => {
                 onSubmit={(e) => {
                   e.preventDefault();
                   if (!inputMessage.toString().trim()) return; // prevent empty message
+                  if (!userId()) {
+                    socketRef.current?.emit("user_login", inputMessage);
+                    setInputMessage("");
+                    setMessages((prev) => {
+                      return [
+                        ...prev,
+                        {
+                          role: "user",
+                          content: inputMessage,
+                          time: getTime(),
+                        },
+                      ];
+                    });
+                    return;
+                  }
                   setMessages((prev) => {
                     return [
                       ...prev,
@@ -157,7 +190,7 @@ const ChatBox = ({ onClose }: { onClose: () => void }) => {
                   });
                   socketRef.current?.emit("chat_message", {
                     message: inputMessage,
-                    Id: userId,
+                    Id: userId(),
                   });
                   setInputMessage("");
                   setTimeout(() => {
@@ -165,7 +198,7 @@ const ChatBox = ({ onClose }: { onClose: () => void }) => {
                       return [
                         ...prev,
                         {
-                          role: "bot",
+                          role: "assistant",
                           content: "Thinking...",
                           time: getTime(),
                         },
