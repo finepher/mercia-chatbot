@@ -6,6 +6,7 @@ const ws = require("./webSocket/socket");
 const connectDB = require("./config/database");
 
 dotenv.config();
+connectDB()
 
 const socket = new Server(3001, {
   cors: "*",
@@ -19,9 +20,9 @@ const app = express();
 const PORT = process.env.PORT || 3000;
 
 app.use(cors());
+app.use(express.json())
+app.use('/chat', require("./routers/chatRouter"))
 
-connectDB().then(() => {
-  app.listen(PORT, () => {
+app.listen(PORT, () => {
   console.log(`✅ server running on port ${PORT}`);
-})
-});
+  })

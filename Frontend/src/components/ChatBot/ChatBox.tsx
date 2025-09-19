@@ -17,34 +17,19 @@ type ChatMessage = {
 const ChatBox = ({ onClose }: { onClose: () => void }) => {
   const [inputMessage, setInputMessage] = useState<string>("");
   const [messages, setMessages] = useState<ChatMessage[]>([]);
-  const suggestedMessages: string[] = [
-    "🤔 Do you deliver tirur?",
-    "💰 Stores",
-    "🙋‍♂️ FAQs",
-    "📞 Contact Us",
-    "Show me the latest products",
-    "Do you have discounts today?",
-    "Where is my order?",
-    "What payment methods do you accept?",
-    "I need help with my order",
-  ];
-
-  // const getUserId = () => {
-  //   const id = crypto.randomUUID();
-  //   localStorage.setItem("userId", id);
-  //   return id;
-  // };
 
   const userId = () => {
+    // localStorage.setItem("userId", "68c2ebd4cda9bc8dd3642989");
     const storedId = localStorage.getItem("userId");
     return storedId;
   };
 
   const getTime = () => {
     const now = new Date();
-    const currentTime = now.toLocaleTimeString([], {
+    const currentTime = now.toLocaleTimeString("en-GB", {
       hour: "2-digit",
       minute: "2-digit",
+      hour12: false,
     });
     return currentTime;
   };
@@ -54,6 +39,21 @@ const ChatBox = ({ onClose }: { onClose: () => void }) => {
   useEffect(() => {
     scrollRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [messages]);
+
+  useEffect(() => {
+    if (!userId()) return;
+    const apiURL = `http://localhost:3000/chat/${userId()}`;
+    const getChats = async () => {
+      try {
+        const response = await fetch(apiURL);
+        const data = await response.json();
+        setMessages(data);
+      } catch (error) {
+        console.log(error);
+      }
+    };
+    getChats();
+  }, []);
 
   const socketRef = useRef<Socket>(null);
 
@@ -128,20 +128,16 @@ const ChatBox = ({ onClose }: { onClose: () => void }) => {
             </button>
           </div>
           {/* Chat Messages */}
-          <div className="relative h-110 top-18 overflow-x-auto [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden px-7 py-5 z-1">
-            {messages.map((message, index) =>
+          <div className="relative h-110 top-18 overflow-x-auto [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden pl-9 py-5 z-1">
+            {messages.map((message, i) =>
               message.role === "user" ? (
                 <UserChat
-                  key={index}
+                  index={i}
                   Chat={message.content}
                   time={message.time}
                 />
               ) : (
-                <BotChat
-                  key={index}
-                  Chat={message.content}
-                  time={message.time}
-                />
+                <BotChat index={i} Chat={message.content} time={message.time} />
               )
             )}
             <div ref={scrollRef} />
@@ -150,16 +146,10 @@ const ChatBox = ({ onClose }: { onClose: () => void }) => {
           {/* Footer */}
           <div className="absolute flex flex-col justify-center items-center gap-1 bg-[#ffffff] h-27 bottom-0 w-full px-6 py-4 rounded-b-lg shadow-[0_-4px_6px_3px_rgba(0,0,0,0.1)] z-4">
             <div className="w-full px-1  overflow-x-auto [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden">
-              <div className="flex w-max  gap-2">
-                {suggestedMessages.map((msg, index) => (
-                  <SuggestedMessages
-                    key={index}
-                    index={index}
-                    msg={msg}
-                    InputMessage={setInputMessage}
-                  />
-                ))}
-              </div>
+              <SuggestedMessages
+                inputMessage={inputMessage}
+                setInputMessage={setInputMessage}
+              />
             </div>
             <div>
               <form
@@ -210,6 +200,7 @@ const ChatBox = ({ onClose }: { onClose: () => void }) => {
                 <input
                   className="w-60 outline-none"
                   type="text"
+                  maxLength={200}
                   value={inputMessage}
                   placeholder="Type your message here..."
                   onChange={(e) => {

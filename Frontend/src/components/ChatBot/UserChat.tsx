@@ -3,16 +3,16 @@ import { LiaCheckDoubleSolid } from "react-icons/lia";
 import userprofile from "../../assets/images/userprofile.jpg";
 
 const UserChat = ({
-  key,
+  index,
   Chat,
   time,
 }: {
-  key: number;
+  index: number;
   Chat: string;
   time: string;
 }) => {
   return (
-    <div key={key}>
+    <div key={index}>
       <div className="relative flex justify-start  max-w-60 rounded-lg rounded-br-none pl-4 p-3 pb-7 bg-[#dee2e6]  mb-17 ml-7">
         <p className="ml-2 text-[#444444] break-words w-full">{Chat}</p>
         <img

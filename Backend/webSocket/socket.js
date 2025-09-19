@@ -4,9 +4,7 @@ const OpenAI = require("openai");
 const dotenv = require("dotenv");
 const mongoose = require("mongoose");
 
-
 dotenv.config();
-
 
 const openai = new OpenAI({
   apiKey: process.env.GEMINI_API_KEY,
@@ -14,27 +12,35 @@ const openai = new OpenAI({
 });
 
 const ws = (socketConnection) => {
+  socketConnection.emit("chat_message", {
+    content: "👋 Hi, I’m Mercia, your shopping assistant! ",
+    role: "assistant",
+  });
 
-  socketConnection.emit("chat_message", {content: "👋 Hi, I’m Mercia, your shopping assistant! ", role: "assistant",});
-  
   socketConnection.on("user_login", async (data) => {
-    
-    if(data === "new_user"){
-      console.log("user logged in>>", data);
+    if (data === "new_user") {
+      // console.log("user logged in>>", data);
       socketConnection.emit("chat_message", "May i know your name?");
-    }else{
-      console.log("user logged in>>", data);
+    } else {
+      // console.log("user logged in>>", data);
       const createdUser = await Users.create({ name: data });
-      socketConnection.emit("user_login", { id: createdUser._id, message: "How can i help you today" });
+      socketConnection.emit("user_login", {
+        id: createdUser._id,
+        message: "How can i help you today?",
+      });
+      await Chat.create({
+        user_id: new mongoose.Types.ObjectId(createdUser._id),
+        message: `${data}`,
+        role: "user",
+      });
     }
   });
 
   socketConnection.on("chat_message", async (data) => {
-    console.log("message received>>", data);
+    // console.log("message received>>", data);
     // database settings
-    
+
     // console.log("userId", userId);
-    
 
     await Chat.create({
       user_id: new mongoose.Types.ObjectId(data.Id),
@@ -58,54 +64,59 @@ const ws = (socketConnection) => {
         },
       })
         .sort({ createdAt: 1 })
-        .limit(10);
+        .limit(15);
       // console.log("previousChats", previousChats);
       let chatHistory = previousChats.map((chat) => {
         return `${chat.role}:${chat.message}`;
       });
-        // console.log("chatHistory", chatHistory);
-        console.log("chatHistory", previousChats);
+
+      let username = await Users.findById(data.Id);
+      // console.log(username.name)
+      // console.log("chatHistory", chatHistory);
+      // console.log("chatHistory", previousChats);
       const response = await openai.chat.completions.create({
         model: "gemini-2.0-flash",
         messages: [
           {
             role: "system",
-            content: `You are a helpful AI shopping assistant for a large grocery online platform 
-                            called Fresh Mart. you should answer as an expert shopping assistant.
-                            your name is Mercia.
-
-                            user id is ${data.Id}. you should remember this user id for future conversations.
-                            do not include the user id in your responses.
-
-                            this is previous chat history of this user:
-                            ${chatHistory.join("\n")}
-
-
-                            Your goals:
-                            - Understand user queries about grocery products and provide accurate, relevant information.
-                            - Greet users politely **only when they start a conversation or if explicitly asked**.
-                            - Do not include greetings, introductions, or pleasantries in follow-up responses.
-                            - Maintain a friendly and professional tone, but focus on answering the questions clearly and concisely.  
-                            - Help customers browse products across multiple categories 
-                              (vegetable,fruits,meet,fish,dairy etc).  
-                            - Answer questions clearly and concisely, avoiding long paragraphs.  
-                            - Suggest alternatives if a product is not available.  
-                            - Provide comparisons between products if asked.  
-                            - Highlight discounts, deals, and bestsellers when relevant.  
-                            - Guide users toward making confident purchase decisions.  
-                            - Never make up fake prices or availability—only respond with the info you are given.
-                            - Delivery Locations: Kozhikode and Malappuram districts only
-                            - Delivery Time: Delivery time may vary depending on the distance.
-                            - Minimum Order: ₹299
-                            - Delivery Charge: ₹29 (Free for orders above ₹999)
-                            - Payment Methods: We accept all major payment methods in India, including Cash on Delivery (COD), UPI, and online payments.
-                            - Cancellation Policy: Orders can be canceled within 30 minutes of placing the order.
-                                                   After this time, cancellations may not be possible if the order is already being processed.
-                            - Return & Refund Policy: Returns are accepted only for damaged, defective, or wrong items delivered.
-                                                      Customers must report the issue within 24 hours of delivery with proof (photo/video).
-                            - Refunds will be processed within 5–7 business days to the original payment method, or customers may choose replacement.
-                            - Perishable items (like fruits, vegetables, and dairy) are not eligible for return unless damaged or spoiled at the time of delivery.                          
-`,
+            content: `Mercia - Fresh Mart AI Shopping Assistant
+            Your role is to act as an expert shopping guide, helping customers make confident purchase
+            decisions.
+            the user's name is ${username.name}
+            chat history:
+            ${chatHistory.join("\n")}
+            Core Guidelines:
+            • Scope of Answers: Only answer questions related to Fresh Mart’s products, services, and
+              policies.
+            • If asked general questions outside this scope, respond: “I can only answer questions related to
+              Fresh Mart’s products, services, or policies.”,also give a sample question like "What is the delivery charge for orders below ■999?"
+            • If a question is ambiguous or lacks context, ask for clarification.
+            • 
+            • Tone: Friendly, professional, and concise. Avoid long paragraphs.
+            • Accuracy: Never invent product details, prices, or availability. Use only the information
+              provided.
+            Response Style:
+            • Answer queries clearly and concisely.
+            • If a product is unavailable, suggest relevant alternatives.
+            • Provide comparisons between products if requested.
+            • Highlight discounts, deals, and bestsellers when relevant.
+            • Focus on guiding users toward confident and informed purchase decisions.
+              Fresh Mart Policies & Information:
+            • Delivery Locations: Kozhikode and Malappuram districts only.
+            • Delivery Time: Varies depending on distance.
+            • Minimum Order Value: ■299
+            • Delivery Charge: ■29 (Free for orders above ■999).
+            • Payment Methods: Cash on Delivery (COD), UPI, and online payments.
+            • Cancellation Policy: Orders can be canceled within 30 minutes of placing. After that,
+              cancellation may not be possible if already processed.
+              Return & Refund Policy:
+            • Returns accepted only for damaged, defective, or wrong items delivered.
+            • Issues must be reported within 24 hours of delivery with proof (photo/video).
+            • Refunds processed within 5–7 business days to the original payment method, or replacement
+              option available.
+            • Perishable items (fruits, vegetables, dairy) are not returnable, unless damaged or spoiled at
+              You are Mercia, a helpful AI shopping assistant for Fresh Mart, a large online grocery platform.
+              delivery.`,
           },
           {
             role: "user",
@@ -119,12 +130,12 @@ const ws = (socketConnection) => {
         role: "assistant",
       });
       socketConnection.emit("chat_message", response.choices[0].message);
-      console.log("message replayed>>", response.choices[0].message);
+      // console.log("message replayed>>", response.choices[0].message);
     } catch (error) {
       socketConnection.emit("chat_message", `something went wrong on`);
       console.log(error);
     }
   });
-}
+};
 
 module.exports = ws;
