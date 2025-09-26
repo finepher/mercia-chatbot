@@ -1,10 +1,10 @@
 // import React from 'react'
-import FlottingButton from "../components/ChatBot/FlottingButton";
+import FloatingButton from "../components/ChatBot/FloatingButton";
 
 const Home = () => {
   return (
     <div>
-      <FlottingButton />
+      <FloatingButton />
     </div>
   );
 };
